@@ -1,4 +1,4 @@
-package Implementacion.datos;
+package U2T2.datos;
 
 /**
  * Simula un registro recibido desde una fuente externa, por ejemplo CSV o JSON.

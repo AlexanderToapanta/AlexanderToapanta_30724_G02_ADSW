@@ -1,6 +1,6 @@
-package Implementacion.datos;
+package U2T2.datos;
 
-import Implementacion.modelo.Estudiante;
+import U2T2.modelo.Estudiante;
 import java.util.ArrayList;
 import java.util.List;
 

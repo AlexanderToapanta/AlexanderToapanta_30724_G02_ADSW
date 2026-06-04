@@ -1,7 +1,7 @@
-package Implementacion.logica;
+package U2T2.logica;
 
-import Implementacion.datos.EstudianteExterno;
-import Implementacion.modelo.Estudiante;
+import U2T2.datos.EstudianteExterno;
+import U2T2.modelo.Estudiante;
 
 /**
  * Adapter: convierte el formato externo codigo/nombreCompleto/anios

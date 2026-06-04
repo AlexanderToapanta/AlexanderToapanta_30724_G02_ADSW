@@ -1,6 +1,6 @@
-package Implementacion.logica;
+package U2T2.logica;
 
-import Implementacion.modelo.Estudiante;
+import U2T2.modelo.Estudiante;
 
 /**
  * Decorator: agrega validaciones y reglas academicas al CRUD base.

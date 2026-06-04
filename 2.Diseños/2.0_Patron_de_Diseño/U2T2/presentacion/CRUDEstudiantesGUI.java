@@ -1,7 +1,7 @@
-package Implementacion.presentacion;
+package U2T2.presentacion;
 
-import Implementacion.logica.ControlEstudiante;
-import Implementacion.modelo.Estudiante;
+import U2T2.logica.ControlEstudiante;
+import U2T2.modelo.Estudiante;
 
 import javax.swing.*;
 import java.awt.*;

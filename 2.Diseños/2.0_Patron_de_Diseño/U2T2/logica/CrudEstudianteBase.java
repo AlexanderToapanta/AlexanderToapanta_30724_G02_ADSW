@@ -1,7 +1,7 @@
-package Implementacion.logica;
+package U2T2.logica;
 
-import Implementacion.datos.RepositorioEstudiante;
-import Implementacion.modelo.Estudiante;
+import U2T2.datos.RepositorioEstudiante;
+import U2T2.modelo.Estudiante;
 import java.util.List;
 
 /**

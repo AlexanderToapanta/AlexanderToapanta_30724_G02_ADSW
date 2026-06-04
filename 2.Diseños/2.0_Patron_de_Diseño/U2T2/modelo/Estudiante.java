@@ -1,4 +1,4 @@
-package Implementacion.modelo;
+package U2T2.modelo;
 
 import java.util.Objects;
 

@@ -1,6 +1,6 @@
-package Implementacion.logica;
+package U2T2.logica;
 
-import Implementacion.modelo.Estudiante;
+import U2T2.modelo.Estudiante;
 import java.util.List;
 
 public abstract class DecoradorCrudEstudiante implements ServicioCrudEstudiante {

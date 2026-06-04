@@ -144,25 +144,25 @@ mantiene el repositorio y la entrada externa simulada.
 
 ## Como ejecutar
 
-Desde PowerShell, ubicarse en la carpeta padre de `Implementacion`, es decir,
-la carpeta que contiene el directorio `Implementacion`.
+Desde PowerShell, ubicarse en la carpeta padre de `U2T2`, es decir,
+la carpeta que contiene el directorio `U2T2`.
 
 Compilar todos los archivos Java:
 
 ```powershell
-javac (Get-ChildItem "Implementacion" -Recurse -Filter *.java | Select-Object -ExpandProperty FullName)
+javac (Get-ChildItem "U2T2" -Recurse -Filter *.java | Select-Object -ExpandProperty FullName)
 ```
 
 Ejecutar la interfaz grafica del CRUD:
 
 ```powershell
-java Implementacion.presentacion.CRUDEstudiantesGUI
+java U2T2.presentacion.CRUDEstudiantesGUI
 ```
 
 Ejecutar la prueba de consola para evidenciar Adapter y Decorator:
 
 ```powershell
-java Implementacion.presentacion.PruebaAdapterDecorator
+java U2T2.presentacion.PruebaAdapterDecorator
 ```
 
 ## Evidencias de comportamiento
@@ -174,8 +174,8 @@ por decorators de validacion y auditoria.
 Prueba de consola:
 
 ```powershell
-javac (Get-ChildItem "Implementacion" -Recurse -Filter *.java | Select-Object -ExpandProperty FullName)
-java Implementacion.presentacion.PruebaAdapterDecorator
+javac (Get-ChildItem "U2T2" -Recurse -Filter *.java | Select-Object -ExpandProperty FullName)
+java U2T2.presentacion.PruebaAdapterDecorator
 ```
 
 Salida esperada:
