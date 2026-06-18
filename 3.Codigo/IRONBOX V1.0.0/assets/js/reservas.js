@@ -12,17 +12,20 @@
     const reservasEmpty = document.getElementById('reservasEmpty');
 
     let usarSesionAtleta = false;
+    let usuarioActual = null;
 
     document.addEventListener('DOMContentLoaded', iniciar);
     atletaSelect.addEventListener('change', cargarPanelAtleta);
     refreshButton.addEventListener('click', cargarPanelAtleta);
 
     async function iniciar() {
-        const usuario = await obtenerSesion();
-        usarSesionAtleta = usuario && usuario.rol === 'Atleta';
+        usuarioActual = await obtenerSesion();
+        usarSesionAtleta = usuarioActual && usuarioActual.rol === 'Atleta';
 
         if (usarSesionAtleta) {
-            atletaSelect.closest('label').hidden = true;
+            await cargarAtletas();
+            preseleccionarAtletaPorCorreo(usuarioActual.correo);
+            atletaSelect.disabled = true;
             await cargarPanelAtleta();
             return;
         }
@@ -38,6 +41,7 @@
             const option = document.createElement('option');
             option.value = atleta.id;
             option.textContent = atleta.nombre;
+            option.dataset.correo = atleta.correo;
             atletaSelect.appendChild(option);
         });
     }
@@ -58,8 +62,8 @@
 
         try {
             const [clases, reservas] = await Promise.all([
-                solicitar('clases', usarSesionAtleta ? {} : { idAtleta }),
-                solicitar('misReservas', usarSesionAtleta ? {} : { idAtleta }),
+                solicitar('clases', idAtleta ? { idAtleta } : {}),
+                solicitar('misReservas', idAtleta ? { idAtleta } : {}),
             ]);
             renderizarClases(clases.data);
             renderizarReservas(reservas.data);
@@ -134,7 +138,7 @@
 
         try {
             evento.currentTarget.disabled = true;
-            await enviar('reservar', { ...(usarSesionAtleta ? {} : { idAtleta }), idClase });
+            await enviar('reservar', { ...(idAtleta ? { idAtleta } : {}), idClase });
             mostrarEstado('Reserva confirmada correctamente.', 'ok');
             await cargarPanelAtleta();
         } catch (error) {
@@ -153,7 +157,7 @@
 
         try {
             evento.currentTarget.disabled = true;
-            await enviar('cancelar', { ...(usarSesionAtleta ? {} : { idAtleta }), id });
+            await enviar('cancelar', { ...(idAtleta ? { idAtleta } : {}), id });
             mostrarEstado('Reserva cancelada correctamente.', 'ok');
             await cargarPanelAtleta();
         } catch (error) {
@@ -199,6 +203,21 @@
 
     function obtenerAtletaSeleccionado() {
         return Number(atletaSelect.value || 0);
+    }
+
+    function preseleccionarAtletaPorCorreo(correo) {
+        if (!correo) {
+            return;
+        }
+
+        const buscado = correo.trim().toLowerCase();
+        const option = Array.from(atletaSelect.options).find((item) => {
+            return (item.dataset.correo || '').toLowerCase() === buscado;
+        });
+
+        if (option) {
+            atletaSelect.value = option.value;
+        }
     }
 
     function mostrarEstado(mensaje, tipo) {

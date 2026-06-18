@@ -15,6 +15,7 @@
     const cancelMembershipButton = document.getElementById('cancelMembershipButton');
 
     let usarSesionAtleta = false;
+    let usuarioActual = null;
 
     document.addEventListener('DOMContentLoaded', iniciar);
     atletaSelect.addEventListener('change', cargarMiMembresia);
@@ -23,11 +24,13 @@
     cancelMembershipButton.addEventListener('click', cancelarMembresia);
 
     async function iniciar() {
-        const usuario = await obtenerSesion();
-        usarSesionAtleta = usuario && usuario.rol === 'Atleta';
+        usuarioActual = await obtenerSesion();
+        usarSesionAtleta = usuarioActual && usuarioActual.rol === 'Atleta';
 
         if (usarSesionAtleta) {
-            atletaSelect.closest('label').hidden = true;
+            await cargarAtletas();
+            preseleccionarAtletaPorCorreo(usuarioActual.correo);
+            atletaSelect.disabled = true;
         } else {
             await cargarAtletas();
             preseleccionarAtletaDesdeUrl();
@@ -44,6 +47,7 @@
             const option = document.createElement('option');
             option.value = atleta.id;
             option.textContent = atleta.nombre;
+            option.dataset.correo = atleta.correo;
             atletaSelect.appendChild(option);
         });
     }
@@ -56,7 +60,7 @@
         }
 
         try {
-            const respuesta = await solicitar('miMembresia', usarSesionAtleta ? {} : { idAtleta });
+            const respuesta = await solicitar('miMembresia', idAtleta ? { idAtleta } : {});
             renderizarMembresia(respuesta.data);
         } catch (error) {
             mostrarEstado(error.message, 'error');
@@ -75,7 +79,7 @@
         try {
             submitButton.disabled = true;
             await enviar('pagarMembresia', {
-                ...(usarSesionAtleta ? {} : { idAtleta }),
+                ...(idAtleta ? { idAtleta } : {}),
                 metodoPago: document.getElementById('metodoPago').value,
                 fechaPago: obtenerFechaActual(),
             });
@@ -102,7 +106,7 @@
 
         try {
             cancelMembershipButton.disabled = true;
-            await enviar('cancelarMembresia', usarSesionAtleta ? {} : { idAtleta });
+            await enviar('cancelarMembresia', idAtleta ? { idAtleta } : {});
             mostrarEstado('Membresia cancelada correctamente.', 'ok');
             await cargarMiMembresia();
         } catch (error) {
@@ -170,6 +174,21 @@
 
         if (idAtleta) {
             atletaSelect.value = idAtleta;
+        }
+    }
+
+    function preseleccionarAtletaPorCorreo(correo) {
+        if (!correo) {
+            return;
+        }
+
+        const buscado = correo.trim().toLowerCase();
+        const option = Array.from(atletaSelect.options).find((item) => {
+            return (item.dataset.correo || '').toLowerCase() === buscado;
+        });
+
+        if (option) {
+            atletaSelect.value = option.value;
         }
     }
 

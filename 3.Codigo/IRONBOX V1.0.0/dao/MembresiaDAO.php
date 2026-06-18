@@ -128,6 +128,8 @@ class MembresiaDAO
 
     public function listarAtletas(): array
     {
+        $this->sincronizarAtletasDesdeUsuarios();
+
         $sentencia = $this->conexion->query(
             'SELECT id, nombre, correo, fecha_registro FROM atletas ORDER BY nombre ASC'
         );
@@ -137,6 +139,8 @@ class MembresiaDAO
 
     public function buscarAtletaPorCorreo(string $correo): ?array
     {
+        $this->sincronizarAtletaPorCorreo($correo);
+
         $sentencia = $this->conexion->prepare(
             'SELECT id, nombre, correo, fecha_registro
                FROM atletas
@@ -151,6 +155,8 @@ class MembresiaDAO
 
     public function listarAtletasConMembresia(): array
     {
+        $this->sincronizarAtletasDesdeUsuarios();
+
         $sentencia = $this->conexion->query(
             'SELECT
                 a.id,
@@ -180,10 +186,42 @@ class MembresiaDAO
 
     public function atletaExiste(int $idAtleta): bool
     {
+        $this->sincronizarAtletasDesdeUsuarios();
+
         $sentencia = $this->conexion->prepare('SELECT COUNT(*) FROM atletas WHERE id = :id');
         $sentencia->execute(['id' => $idAtleta]);
 
         return (int) $sentencia->fetchColumn() > 0;
+    }
+
+    private function sincronizarAtletasDesdeUsuarios(): void
+    {
+        $this->conexion->exec(
+            "INSERT INTO atletas (nombre, correo, fecha_registro)
+             SELECT u.nombre, u.correo, u.fecha_registro
+               FROM usuarios u
+              WHERE u.rol = 'Atleta'
+                AND u.estado = 'Activo'
+                AND NOT EXISTS (
+                    SELECT 1 FROM atletas a WHERE lower(a.correo) = lower(u.correo)
+                )"
+        );
+    }
+
+    private function sincronizarAtletaPorCorreo(string $correo): void
+    {
+        $sentencia = $this->conexion->prepare(
+            "INSERT INTO atletas (nombre, correo, fecha_registro)
+             SELECT u.nombre, u.correo, u.fecha_registro
+               FROM usuarios u
+              WHERE lower(u.correo) = :correo
+                AND u.rol = 'Atleta'
+                AND u.estado = 'Activo'
+                AND NOT EXISTS (
+                    SELECT 1 FROM atletas a WHERE lower(a.correo) = lower(u.correo)
+                )"
+        );
+        $sentencia->execute(['correo' => strtolower(trim($correo))]);
     }
 
     private function mapearMembresiaConAtleta(array $fila): array

@@ -94,6 +94,8 @@ class ClaseDAO
 
     public function listarEntrenadores(): array
     {
+        $this->sincronizarEntrenadoresDesdeUsuarios();
+
         $sentencia = $this->conexion->query(
             'SELECT id, nombre, correo, disponible FROM entrenadores ORDER BY nombre ASC'
         );
@@ -103,6 +105,8 @@ class ClaseDAO
 
     public function entrenadorExisteYDisponible(int $entrenadorId): bool
     {
+        $this->sincronizarEntrenadoresDesdeUsuarios();
+
         $sentencia = $this->conexion->prepare(
             'SELECT COUNT(*) FROM entrenadores WHERE id = :id AND disponible = 1'
         );
@@ -193,6 +197,8 @@ class ClaseDAO
 
     public function listarAtletas(): array
     {
+        $this->sincronizarAtletasDesdeUsuarios();
+
         $sentencia = $this->conexion->query(
             'SELECT id, nombre, correo, fecha_registro FROM atletas ORDER BY nombre ASC'
         );
@@ -202,10 +208,40 @@ class ClaseDAO
 
     public function atletaExiste(int $idAtleta): bool
     {
+        $this->sincronizarAtletasDesdeUsuarios();
+
         $sentencia = $this->conexion->prepare('SELECT COUNT(*) FROM atletas WHERE id = :id');
         $sentencia->execute(['id' => $idAtleta]);
 
         return (int) $sentencia->fetchColumn() > 0;
+    }
+
+    private function sincronizarAtletasDesdeUsuarios(): void
+    {
+        $this->conexion->exec(
+            "INSERT INTO atletas (nombre, correo, fecha_registro)
+             SELECT u.nombre, u.correo, u.fecha_registro
+               FROM usuarios u
+              WHERE u.rol = 'Atleta'
+                AND u.estado = 'Activo'
+                AND NOT EXISTS (
+                    SELECT 1 FROM atletas a WHERE lower(a.correo) = lower(u.correo)
+                )"
+        );
+    }
+
+    private function sincronizarEntrenadoresDesdeUsuarios(): void
+    {
+        $this->conexion->exec(
+            "INSERT INTO entrenadores (nombre, correo, disponible)
+             SELECT u.nombre, u.correo, 1
+               FROM usuarios u
+              WHERE u.rol = 'Entrenador'
+                AND u.estado = 'Activo'
+                AND NOT EXISTS (
+                    SELECT 1 FROM entrenadores e WHERE lower(e.correo) = lower(u.correo)
+                )"
+        );
     }
 
     public function claseExiste(int $idClase): bool

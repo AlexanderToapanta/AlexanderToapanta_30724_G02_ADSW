@@ -31,7 +31,12 @@ class UsuarioDAO
             'fecha_registro' => $usuario->getFechaRegistro(),
         ]);
 
-        return $this->buscarPorId((int) $this->conexion->lastInsertId());
+        $usuarioCreado = $this->buscarPorId((int) $this->conexion->lastInsertId());
+        if ($usuarioCreado) {
+            $this->sincronizarPersonaPorRol($usuarioCreado);
+        }
+
+        return $usuarioCreado;
     }
 
     public function actualizar(Usuario $usuario): Usuario
@@ -59,7 +64,12 @@ class UsuarioDAO
             'fecha_registro' => $usuario->getFechaRegistro(),
         ]);
 
-        return $this->buscarPorId((int) $usuario->getId());
+        $usuarioActualizado = $this->buscarPorId((int) $usuario->getId());
+        if ($usuarioActualizado) {
+            $this->sincronizarPersonaPorRol($usuarioActualizado);
+        }
+
+        return $usuarioActualizado;
     }
 
     public function desactivar(int $id): bool
@@ -132,5 +142,37 @@ class UsuarioDAO
         $sentencia->execute($parametros);
 
         return (int) $sentencia->fetchColumn() > 0;
+    }
+
+    public function sincronizarPersonaPorRol(Usuario $usuario): void
+    {
+        if ($usuario->getRol() === 'Atleta') {
+            $sentencia = $this->conexion->prepare(
+                'INSERT INTO atletas (nombre, correo, fecha_registro)
+                 VALUES (:nombre, :correo, :fecha_registro)
+                 ON DUPLICATE KEY UPDATE
+                    nombre = VALUES(nombre),
+                    fecha_registro = VALUES(fecha_registro)'
+            );
+            $sentencia->execute([
+                'nombre' => $usuario->getNombre(),
+                'correo' => $usuario->getCorreo(),
+                'fecha_registro' => $usuario->getFechaRegistro(),
+            ]);
+        }
+
+        if ($usuario->getRol() === 'Entrenador') {
+            $sentencia = $this->conexion->prepare(
+                'INSERT INTO entrenadores (nombre, correo, disponible)
+                 VALUES (:nombre, :correo, 1)
+                 ON DUPLICATE KEY UPDATE
+                    nombre = VALUES(nombre),
+                    disponible = 1'
+            );
+            $sentencia->execute([
+                'nombre' => $usuario->getNombre(),
+                'correo' => $usuario->getCorreo(),
+            ]);
+        }
     }
 }
