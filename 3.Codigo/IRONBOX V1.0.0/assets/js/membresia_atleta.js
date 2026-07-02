@@ -13,6 +13,10 @@
     const submitButton = document.getElementById('submitButton');
     const refreshButton = document.getElementById('refreshButton');
     const cancelMembershipButton = document.getElementById('cancelMembershipButton');
+    const drawer = document.getElementById('formDrawer');
+    const scrim = document.getElementById('drawerScrim');
+    const registrarPagoButton = document.getElementById('registrarPagoButton');
+    const drawerClose = document.getElementById('drawerClose');
 
     let usarSesionAtleta = false;
     let usuarioActual = null;
@@ -22,6 +26,34 @@
     pagoForm.addEventListener('submit', pagarMembresia);
     refreshButton.addEventListener('click', cargarMiMembresia);
     cancelMembershipButton.addEventListener('click', cancelarMembresia);
+    registrarPagoButton.addEventListener('click', abrirDrawer);
+    drawerClose.addEventListener('click', cerrarFormulario);
+    scrim.addEventListener('click', cerrarFormulario);
+    document.addEventListener('keydown', (evento) => {
+        if (evento.key === 'Escape' && drawer.classList.contains('open')) {
+            cerrarFormulario();
+        }
+    });
+
+    function abrirDrawer() {
+        drawer.classList.add('open');
+        scrim.classList.add('open');
+        drawer.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('no-scroll');
+        window.setTimeout(() => document.getElementById('metodoPago').focus(), 60);
+    }
+
+    function cerrarDrawer() {
+        drawer.classList.remove('open');
+        scrim.classList.remove('open');
+        drawer.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('no-scroll');
+    }
+
+    function cerrarFormulario() {
+        pagoForm.reset();
+        cerrarDrawer();
+    }
 
     async function iniciar() {
         usuarioActual = await obtenerSesion();
@@ -85,6 +117,7 @@
             });
             pagoForm.reset();
             mostrarEstado('Pago simulado registrado correctamente.', 'ok');
+            cerrarDrawer();
             await cargarMiMembresia();
         } catch (error) {
             mostrarEstado(error.message, 'error');
@@ -193,7 +226,7 @@
     }
 
     function obtenerAtletaSeleccionado() {
-        return Number(atletaSelect.value || 0);
+        return Number(document.getElementById('idAtleta').value || 0);
     }
 
     function obtenerFechaActual() {

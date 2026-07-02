@@ -4,211 +4,36 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>IronClad Box | Bandeja de entrada</title>
-    <link rel="stylesheet" href="../assets/css/nav.css?v=2">
-    <style>
-        :root {
-            --bg: #f4f6f8;
-            --panel: #ffffff;
-            --ink: #1f252c;
-            --muted: #68717d;
-            --line: #dce2e8;
-            --brand: #b8232f;
-            --focus: #1f6feb;
-            --danger: #b42318;
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            background: var(--bg);
-            color: var(--ink);
-            font-family: Arial, Helvetica, sans-serif;
-            line-height: 1.45;
-        }
-
-        header {
-            background: #20242a;
-            color: #fff;
-            padding: 18px clamp(16px, 4vw, 48px);
-        }
-
-        header h1 {
-            margin: 0;
-            font-size: clamp(1.35rem, 2vw, 2rem);
-            letter-spacing: 0;
-        }
-
-        main {
-            width: min(980px, calc(100% - 32px));
-            margin: 24px auto 42px;
-            display: grid;
-            gap: 22px;
-        }
-
-        .panel {
-            min-width: 0;
-            background: var(--panel);
-            border: 1px solid var(--line);
-            border-radius: 8px;
-            box-shadow: 0 6px 18px rgba(31, 35, 40, 0.06);
-        }
-
-        .panel-header {
-            padding: 18px 20px 12px;
-            border-bottom: 1px solid var(--line);
-        }
-
-        .panel-header h2 {
-            margin: 0;
-            font-size: 1.05rem;
-            letter-spacing: 0;
-        }
-
-        .toolbar {
-            padding: 18px 20px 20px;
-            display: grid;
-            grid-template-columns: minmax(220px, 360px) auto;
-            gap: 14px;
-            align-items: end;
-        }
-
-        label {
-            display: grid;
-            gap: 6px;
-            color: var(--muted);
-            font-size: 0.9rem;
-            font-weight: 700;
-        }
-
-        select {
-            width: 100%;
-            min-height: 42px;
-            border: 1px solid #c8d0da;
-            border-radius: 6px;
-            padding: 9px 10px;
-            color: var(--ink);
-            background: #fff;
-            font: inherit;
-        }
-
-        select:focus,
-        button:focus {
-            outline: 3px solid rgba(31, 111, 235, 0.22);
-            outline-offset: 1px;
-            border-color: var(--focus);
-        }
-
-        button {
-            min-height: 40px;
-            border: 1px solid #c8d0da;
-            border-radius: 6px;
-            padding: 9px 14px;
-            background: #fff;
-            color: var(--ink);
-            cursor: pointer;
-            font: inherit;
-            font-weight: 700;
-        }
-
-        .message-list {
-            display: grid;
-            gap: 12px;
-            padding: 18px 20px 20px;
-        }
-
-        .message {
-            border: 1px solid var(--line);
-            border-radius: 8px;
-            padding: 14px;
-            background: #fafbfc;
-        }
-
-        .message-meta {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            justify-content: space-between;
-            flex-wrap: wrap;
-            color: var(--muted);
-            font-size: 0.86rem;
-            font-weight: 700;
-        }
-
-        .message p {
-            margin: 10px 0 0;
-        }
-
-        .tag {
-            display: inline-flex;
-            align-items: center;
-            min-height: 28px;
-            border-radius: 999px;
-            padding: 4px 10px;
-            background: #eef2f6;
-            color: #38414c;
-            font-size: 0.86rem;
-            font-weight: 700;
-            white-space: nowrap;
-        }
-
-        .empty {
-            padding: 24px 20px;
-            color: var(--muted);
-        }
-
-        .status {
-            display: none;
-            margin: 0 20px 18px;
-            padding: 11px 12px;
-            border-radius: 6px;
-            font-weight: 700;
-        }
-
-        .status.show {
-            display: block;
-        }
-
-        .status.error {
-            color: var(--danger);
-            background: #fff0ef;
-            border: 1px solid #f0b8b4;
-        }
-
-        @media (max-width: 620px) {
-            main {
-                width: min(100% - 20px, 980px);
-                margin-top: 14px;
-            }
-
-            .toolbar {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
-    <link rel="stylesheet" href="../assets/css/app.css?v=2">
+    <link rel="stylesheet" href="../assets/css/nav.css?v=4">
+    <link rel="stylesheet" href="../assets/css/app.css?v=4">
 </head>
 <body>
     <header>
-        <h1>IronClad Box - Bandeja de entrada</h1>
+        <h1>Bandeja de entrada</h1>
+        <p>Revisa los mensajes y anuncios enviados por el equipo de entrenamiento.</p>
     </header>
 
-    <main>
-        <section class="panel" aria-labelledby="selector-title">
+    <main class="split">
+        <section class="col-form panel" aria-labelledby="selector-title">
             <div class="panel-header">
                 <h2 id="selector-title">Atleta</h2>
             </div>
-            <div class="toolbar">
-                <label for="idAtleta">
-                    Seleccione atleta
-                    <select id="idAtleta">
-                        <option value="">Seleccione atleta</option>
-                    </select>
-                </label>
-                <button type="button" id="refreshButton">Actualizar bandeja</button>
+
+            <div class="panel-body">
+                <form autocomplete="off">
+                    <label for="idAtleta">Seleccione atleta <span class="req">*</span>
+                        <select id="idAtleta">
+                            <option value="">Seleccione atleta</option>
+                        </select>
+                        <span class="help">Elige un atleta para cargar sus mensajes recibidos.</span>
+                    </label>
+
+                    <div class="actions">
+                        <button type="button" class="secondary" id="refreshButton">Actualizar bandeja</button>
+                    </div>
+                </form>
             </div>
+
             <p class="status" id="statusMessage" role="status" aria-live="polite"></p>
         </section>
 
@@ -221,8 +46,8 @@
             <div class="empty" id="emptyState">Seleccione un atleta para ver su bandeja.</div>
         </section>
     </main>
-    <script src="../assets/js/nav.js?v=2"></script>
 
-    <script src="../assets/js/bandeja_atleta.js?v=2"></script>
+    <script src="../assets/js/nav.js?v=4"></script>
+    <script src="../assets/js/bandeja_atleta.js?v=4"></script>
 </body>
 </html>

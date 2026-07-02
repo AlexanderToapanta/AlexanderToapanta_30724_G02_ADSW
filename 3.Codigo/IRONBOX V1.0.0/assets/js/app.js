@@ -16,12 +16,49 @@
     const horaInput = document.getElementById('hora');
     const duracionInput = document.getElementById('duracion');
     const cupoMaximoInput = document.getElementById('cupoMaximo');
+    const drawer = document.getElementById('formDrawer');
+    const scrim = document.getElementById('drawerScrim');
+    const nuevaButton = document.getElementById('nuevaClaseButton');
+    const drawerClose = document.getElementById('drawerClose');
 
     let clases = [];
 
     document.addEventListener('DOMContentLoaded', iniciar);
     form.addEventListener('submit', guardarClase);
-    cancelButton.addEventListener('click', limpiarFormulario);
+    cancelButton.addEventListener('click', cerrarFormulario);
+    nuevaButton.addEventListener('click', nuevaClase);
+    drawerClose.addEventListener('click', cerrarFormulario);
+    scrim.addEventListener('click', cerrarFormulario);
+    document.addEventListener('keydown', (evento) => {
+        if (evento.key === 'Escape' && drawer.classList.contains('open')) {
+            cerrarFormulario();
+        }
+    });
+
+    function abrirDrawer() {
+        drawer.classList.add('open');
+        scrim.classList.add('open');
+        drawer.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('no-scroll');
+        window.setTimeout(() => diaInput.focus(), 60);
+    }
+
+    function cerrarDrawer() {
+        drawer.classList.remove('open');
+        scrim.classList.remove('open');
+        drawer.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('no-scroll');
+    }
+
+    function nuevaClase() {
+        limpiarFormulario();
+        abrirDrawer();
+    }
+
+    function cerrarFormulario() {
+        limpiarFormulario();
+        cerrarDrawer();
+    }
 
     async function iniciar() {
         await Promise.all([cargarEntrenadores(), cargarClases()]);
@@ -59,6 +96,7 @@
             await enviar(editando ? 'editar' : 'crear', datos);
             mostrarEstado(editando ? 'Clase actualizada correctamente.' : 'Clase creada correctamente.', 'ok');
             limpiarFormulario();
+            cerrarDrawer();
             await cargarClases();
         } catch (error) {
             mostrarEstado(error.message, 'error');
@@ -131,7 +169,7 @@
         formTitle.textContent = 'Editar clase';
         submitButton.textContent = 'Actualizar clase';
         cancelButton.hidden = false;
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        abrirDrawer();
     }
 
     function limpiarFormulario() {

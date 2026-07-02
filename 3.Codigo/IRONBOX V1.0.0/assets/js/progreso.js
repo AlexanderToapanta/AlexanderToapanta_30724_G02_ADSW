@@ -17,13 +17,50 @@
     const historialBody = document.getElementById('historialBody');
     const emptyState = document.getElementById('emptyState');
     const graficoCanvas = document.getElementById('graficoEvolucion');
+    const drawer = document.getElementById('formDrawer');
+    const scrim = document.getElementById('drawerScrim');
+    const nuevaButton = document.getElementById('nuevaRegistroButton');
+    const drawerClose = document.getElementById('drawerClose');
 
     let graficoEvolucion = null;
 
     document.addEventListener('DOMContentLoaded', iniciar);
     form.addEventListener('submit', guardarResultado);
     atletaSelect.addEventListener('change', cargarHistorialSeleccionado);
-    clearButton.addEventListener('click', limpiarCampos);
+    clearButton.addEventListener('click', () => limpiarCampos());
+    nuevaButton.addEventListener('click', nuevoRegistro);
+    drawerClose.addEventListener('click', cerrarFormulario);
+    scrim.addEventListener('click', cerrarFormulario);
+    document.addEventListener('keydown', (evento) => {
+        if (evento.key === 'Escape' && drawer.classList.contains('open')) {
+            cerrarFormulario();
+        }
+    });
+
+    function abrirDrawer() {
+        drawer.classList.add('open');
+        scrim.classList.add('open');
+        drawer.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('no-scroll');
+        window.setTimeout(() => fechaInput.focus(), 60);
+    }
+
+    function cerrarDrawer() {
+        drawer.classList.remove('open');
+        scrim.classList.remove('open');
+        drawer.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('no-scroll');
+    }
+
+    function nuevoRegistro() {
+        limpiarCampos(false);
+        abrirDrawer();
+    }
+
+    function cerrarFormulario() {
+        limpiarCampos(false);
+        cerrarDrawer();
+    }
 
     async function iniciar() {
         if (fechaInput) {
@@ -63,6 +100,7 @@
             await enviar('guardar', datos);
             mostrarEstado('Resultado WOD registrado correctamente.', 'ok');
             limpiarCampos(false);
+            cerrarDrawer();
             await cargarHistorialSeleccionado();
         } catch (error) {
             mostrarEstado(error.message, 'error');

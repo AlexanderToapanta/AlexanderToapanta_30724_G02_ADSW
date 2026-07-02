@@ -4,335 +4,94 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>IronClad Box | Mi membresia</title>
-    <link rel="stylesheet" href="../assets/css/nav.css?v=2">
-    <style>
-        :root {
-            --bg: #f4f6f8;
-            --panel: #ffffff;
-            --ink: #1f252c;
-            --muted: #68717d;
-            --line: #dce2e8;
-            --brand: #b8232f;
-            --brand-dark: #8e1923;
-            --focus: #1f6feb;
-            --paid: #137333;
-            --pending: #945600;
-            --expired: #b42318;
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            margin: 0;
-            background: var(--bg);
-            color: var(--ink);
-            font-family: Arial, Helvetica, sans-serif;
-            line-height: 1.45;
-        }
-
-        header {
-            background: #20242a;
-            color: #fff;
-            padding: 18px clamp(16px, 4vw, 48px);
-        }
-
-        header h1 {
-            margin: 0;
-            font-size: clamp(1.35rem, 2vw, 2rem);
-            letter-spacing: 0;
-        }
-
-        main {
-            width: min(1040px, calc(100% - 32px));
-            margin: 24px auto 42px;
-            display: grid;
-            grid-template-columns: minmax(0, 1fr) 380px;
-            gap: 22px;
-            align-items: start;
-        }
-
-        .panel {
-            min-width: 0;
-            background: var(--panel);
-            border: 1px solid var(--line);
-            border-radius: 8px;
-            box-shadow: 0 6px 18px rgba(31, 35, 40, 0.06);
-        }
-
-        .panel-header {
-            padding: 18px 20px 12px;
-            border-bottom: 1px solid var(--line);
-        }
-
-        .panel-header h2 {
-            margin: 0;
-            font-size: 1.05rem;
-            letter-spacing: 0;
-        }
-
-        .content,
-        form {
-            padding: 18px 20px 20px;
-            display: grid;
-            gap: 14px;
-        }
-
-        label {
-            display: grid;
-            gap: 6px;
-            color: var(--muted);
-            font-size: 0.9rem;
-            font-weight: 700;
-        }
-
-        input,
-        select {
-            width: 100%;
-            min-height: 42px;
-            border: 1px solid #c8d0da;
-            border-radius: 6px;
-            padding: 9px 10px;
-            color: var(--ink);
-            background: #fff;
-            font: inherit;
-        }
-
-        input:focus,
-        select:focus,
-        button:focus {
-            outline: 3px solid rgba(31, 111, 235, 0.22);
-            outline-offset: 1px;
-            border-color: var(--focus);
-        }
-
-        .metrics {
-            display: grid;
-            grid-template-columns: repeat(3, minmax(0, 1fr));
-            gap: 12px;
-        }
-
-        .metric {
-            border: 1px solid var(--line);
-            border-radius: 8px;
-            padding: 14px;
-            background: #fafbfc;
-        }
-
-        .metric span {
-            display: block;
-            color: var(--muted);
-            font-size: 0.82rem;
-            font-weight: 700;
-            text-transform: uppercase;
-        }
-
-        .metric strong {
-            display: block;
-            margin-top: 6px;
-            font-size: 1.05rem;
-        }
-
-        .tag {
-            display: inline-flex;
-            align-items: center;
-            min-height: 30px;
-            width: max-content;
-            border-radius: 999px;
-            padding: 5px 12px;
-            font-size: 0.9rem;
-            font-weight: 700;
-        }
-
-        .tag.Pagado {
-            color: var(--paid);
-            background: #eaf5ed;
-        }
-
-        .tag.Pendiente {
-            color: var(--pending);
-            background: #fff5db;
-        }
-
-        .tag.Vencido {
-            color: var(--expired);
-            background: #fff0ef;
-        }
-
-        .tag.Cancelada {
-            color: var(--muted);
-            background: #eef0f3;
-        }
-
-        .form-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-        }
-
-        button {
-            min-height: 40px;
-            border: 1px solid transparent;
-            border-radius: 6px;
-            padding: 9px 14px;
-            cursor: pointer;
-            font: inherit;
-            font-weight: 700;
-        }
-
-        button:disabled {
-            cursor: not-allowed;
-            opacity: 0.56;
-        }
-
-        .primary {
-            background: var(--brand);
-            color: #fff;
-        }
-
-        .primary:hover {
-            background: var(--brand-dark);
-        }
-
-        .secondary {
-            background: #fff;
-            color: var(--ink);
-            border-color: #c8d0da;
-        }
-
-        .danger {
-            background: #b42318;
-            color: #fff;
-        }
-
-        .danger:hover {
-            background: #8f1d14;
-        }
-
-        .status {
-            display: none;
-            margin: 0 20px 18px;
-            padding: 11px 12px;
-            border-radius: 6px;
-            font-weight: 700;
-        }
-
-        .status.show {
-            display: block;
-        }
-
-        .status.ok {
-            color: var(--paid);
-            background: #eaf5ed;
-            border: 1px solid #bddfc7;
-        }
-
-        .status.error {
-            color: var(--expired);
-            background: #fff0ef;
-            border: 1px solid #f0b8b4;
-        }
-
-        @media (max-width: 900px) {
-            main {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        @media (max-width: 620px) {
-            main {
-                width: min(100% - 20px, 1040px);
-                margin-top: 14px;
-            }
-
-            .metrics,
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-        }
-    </style>
-    <link rel="stylesheet" href="../assets/css/app.css?v=2">
+    <link rel="stylesheet" href="../assets/css/nav.css?v=4">
+    <link rel="stylesheet" href="../assets/css/app.css?v=4">
 </head>
 <body>
     <header>
-        <h1>IronClad Box - Mi membresia</h1>
+        <h1>Mi membresia</h1>
+        <p>Consulta el estado de tu plan y registra una renovacion de pago.</p>
     </header>
 
     <main>
+        <p class="status" id="statusMessage" role="status" aria-live="polite"></p>
+
         <section class="panel" aria-labelledby="estado-title">
             <div class="panel-header">
                 <h2 id="estado-title">Estado financiero</h2>
+                <button type="button" class="primary btn-sm" id="registrarPagoButton">+ Registrar pago</button>
             </div>
 
-            <div class="content">
-                <label for="idAtleta">
-                    Atleta activo
+            <div class="panel-body">
+                <span class="badge warn" id="estadoMembresia">Sin membresia</span>
+
+                <label for="idAtleta">Atleta activo <span class="req">*</span>
                     <select id="idAtleta">
                         <option value="">Seleccione un atleta</option>
                     </select>
+                    <span class="help">Selecciona el atleta para revisar su membresia vigente.</span>
                 </label>
 
                 <div class="metrics">
                     <div class="metric">
-                        <span>Tipo</span>
-                        <strong id="tipoMembresia">-</strong>
+                        <span class="metric-label">Tipo</span>
+                        <strong class="metric-value" id="tipoMembresia">-</strong>
                     </div>
                     <div class="metric">
-                        <span>Vencimiento</span>
-                        <strong id="fechaVencimiento">-</strong>
+                        <span class="metric-label">Vencimiento</span>
+                        <strong class="metric-value" id="fechaVencimiento">-</strong>
                     </div>
                     <div class="metric">
-                        <span>Precio</span>
-                        <strong id="precioMembresia">-</strong>
+                        <span class="metric-label">Precio</span>
+                        <strong class="metric-value" id="precioMembresia">-</strong>
                     </div>
                 </div>
 
-                <span class="tag Pendiente" id="estadoMembresia">Sin membresia</span>
-            </div>
-
-            <p class="status" id="statusMessage" role="status" aria-live="polite"></p>
-        </section>
-
-        <section class="panel" aria-labelledby="pago-title">
-            <div class="panel-header">
-                <h2 id="pago-title">Renovar membresia</h2>
-            </div>
-
-            <form id="pagoForm" autocomplete="off">
-                <label for="metodoPago">
-                    Metodo de pago
-                    <select id="metodoPago" name="metodoPago" required>
-                        <option value="Tarjeta">Tarjeta</option>
-                        <option value="Transferencia">Transferencia</option>
-                    </select>
-                </label>
-
-                <label for="numeroTarjeta">
-                    Numero de tarjeta
-                    <input type="text" id="numeroTarjeta" name="numeroTarjeta" inputmode="numeric" maxlength="19" placeholder="4111 1111 1111 1111" required>
-                </label>
-
-                <div class="form-row">
-                    <label for="expiracion">
-                        Expiracion
-                        <input type="text" id="expiracion" name="expiracion" maxlength="5" placeholder="MM/AA" required>
-                    </label>
-
-                    <label for="cvv">
-                        CVV
-                        <input type="password" id="cvv" name="cvv" inputmode="numeric" maxlength="4" required>
-                    </label>
+                <div class="actions">
+                    <button type="button" class="secondary" id="refreshButton">Actualizar estado</button>
                 </div>
-
-                <button type="submit" class="primary" id="submitButton">Confirmar pago simulado</button>
-                <button type="button" class="danger" id="cancelMembershipButton">Cancelar membresia</button>
-                <button type="button" class="secondary" id="refreshButton">Actualizar estado</button>
-            </form>
+            </div>
         </section>
     </main>
-    <script src="../assets/js/nav.js?v=2"></script>
 
-    <script src="../assets/js/membresia_atleta.js?v=2"></script>
+    <div class="drawer-scrim" id="drawerScrim"></div>
+    <aside class="drawer" id="formDrawer" role="dialog" aria-modal="true" aria-labelledby="form-title" aria-hidden="true">
+        <div class="drawer-header">
+            <h2 id="form-title">Registrar pago</h2>
+            <button type="button" class="drawer-close" id="drawerClose" aria-label="Cerrar formulario">&times;</button>
+        </div>
+
+        <form id="pagoForm" autocomplete="off">
+            <label for="metodoPago">Metodo de pago <span class="req">*</span>
+                <select id="metodoPago" name="metodoPago" required>
+                    <option value="Tarjeta">Tarjeta</option>
+                    <option value="Transferencia">Transferencia</option>
+                </select>
+                <span class="help">El pago se registra como simulacion para actualizar el estado.</span>
+            </label>
+
+            <label for="numeroTarjeta">Numero de tarjeta <span class="req">*</span>
+                <input type="text" id="numeroTarjeta" name="numeroTarjeta" inputmode="numeric" maxlength="19" placeholder="4111 1111 1111 1111" required>
+            </label>
+
+            <div class="form-row">
+                <label for="expiracion">Expiracion <span class="req">*</span>
+                    <input type="text" id="expiracion" name="expiracion" maxlength="5" placeholder="MM/AA" required>
+                </label>
+
+                <label for="cvv">CVV <span class="req">*</span>
+                    <input type="password" id="cvv" name="cvv" inputmode="numeric" maxlength="4" required>
+                </label>
+            </div>
+
+            <div class="actions">
+                <button type="submit" class="primary" id="submitButton">Confirmar pago simulado</button>
+                <button type="button" class="danger" id="cancelMembershipButton">Cancelar membresia</button>
+            </div>
+        </form>
+    </aside>
+
+    <script src="../assets/js/nav.js?v=4"></script>
+    <script src="../assets/js/membresia_atleta.js?v=4"></script>
 </body>
 </html>

@@ -17,12 +17,49 @@
     const statusMessage = document.getElementById('statusMessage');
     const usuariosBody = document.getElementById('usuariosBody');
     const emptyState = document.getElementById('emptyState');
+    const drawer = document.getElementById('formDrawer');
+    const scrim = document.getElementById('drawerScrim');
+    const nuevaButton = document.getElementById('nuevaUsuarioButton');
+    const drawerClose = document.getElementById('drawerClose');
 
     let usuarios = [];
 
     document.addEventListener('DOMContentLoaded', cargarUsuarios);
     form.addEventListener('submit', guardarUsuario);
-    cancelButton.addEventListener('click', limpiarFormulario);
+    cancelButton.addEventListener('click', cerrarFormulario);
+    nuevaButton.addEventListener('click', nuevoUsuario);
+    drawerClose.addEventListener('click', cerrarFormulario);
+    scrim.addEventListener('click', cerrarFormulario);
+    document.addEventListener('keydown', (evento) => {
+        if (evento.key === 'Escape' && drawer.classList.contains('open')) {
+            cerrarFormulario();
+        }
+    });
+
+    function abrirDrawer() {
+        drawer.classList.add('open');
+        scrim.classList.add('open');
+        drawer.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('no-scroll');
+        window.setTimeout(() => nombreInput.focus(), 60);
+    }
+
+    function cerrarDrawer() {
+        drawer.classList.remove('open');
+        scrim.classList.remove('open');
+        drawer.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('no-scroll');
+    }
+
+    function nuevoUsuario() {
+        limpiarFormulario();
+        abrirDrawer();
+    }
+
+    function cerrarFormulario() {
+        limpiarFormulario();
+        cerrarDrawer();
+    }
 
     async function cargarUsuarios() {
         const respuesta = await solicitar('listar');
@@ -56,6 +93,7 @@
             });
             mostrarEstado(editando ? 'Usuario actualizado correctamente.' : 'Usuario creado correctamente.', 'ok');
             limpiarFormulario();
+            cerrarDrawer();
             await cargarUsuarios();
         } catch (error) {
             mostrarEstado(error.message, 'error');
@@ -144,7 +182,7 @@
         formTitle.textContent = 'Editar usuario';
         submitButton.textContent = 'Actualizar usuario';
         cancelButton.hidden = false;
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        abrirDrawer();
     }
 
     function limpiarFormulario() {

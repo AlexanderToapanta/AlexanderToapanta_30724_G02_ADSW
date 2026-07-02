@@ -17,14 +17,51 @@
     const statusMessage = document.getElementById('statusMessage');
     const atletasBody = document.getElementById('atletasBody');
     const emptyState = document.getElementById('emptyState');
+    const drawer = document.getElementById('formDrawer');
+    const scrim = document.getElementById('drawerScrim');
+    const nuevaButton = document.getElementById('nuevaMembresiaButton');
+    const drawerClose = document.getElementById('drawerClose');
 
     let atletas = [];
 
     document.addEventListener('DOMContentLoaded', iniciar);
     form.addEventListener('submit', guardarMembresia);
     todayButton.addEventListener('click', usarFechaActual);
-    cancelButton.addEventListener('click', limpiarFormulario);
+    cancelButton.addEventListener('click', cerrarFormulario);
     tipoSelect.addEventListener('change', sugerirPrecio);
+    nuevaButton.addEventListener('click', nuevaMembresia);
+    drawerClose.addEventListener('click', cerrarFormulario);
+    scrim.addEventListener('click', cerrarFormulario);
+    document.addEventListener('keydown', (evento) => {
+        if (evento.key === 'Escape' && drawer.classList.contains('open')) {
+            cerrarFormulario();
+        }
+    });
+
+    function abrirDrawer() {
+        drawer.classList.add('open');
+        scrim.classList.add('open');
+        drawer.setAttribute('aria-hidden', 'false');
+        document.body.classList.add('no-scroll');
+        window.setTimeout(() => atletaSelect.focus(), 60);
+    }
+
+    function cerrarDrawer() {
+        drawer.classList.remove('open');
+        scrim.classList.remove('open');
+        drawer.setAttribute('aria-hidden', 'true');
+        document.body.classList.remove('no-scroll');
+    }
+
+    function nuevaMembresia() {
+        limpiarFormulario();
+        abrirDrawer();
+    }
+
+    function cerrarFormulario() {
+        limpiarFormulario();
+        cerrarDrawer();
+    }
 
     async function iniciar() {
         usarFechaActual();
@@ -74,6 +111,7 @@
                 'ok'
             );
             limpiarFormulario();
+            cerrarDrawer();
             await cargarListado();
         } catch (error) {
             mostrarEstado(error.message, 'error');
@@ -154,7 +192,7 @@
         formTitle.textContent = 'Editar membresia';
         submitButton.textContent = 'Actualizar membresia';
         cancelButton.hidden = false;
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        abrirDrawer();
     }
 
     function limpiarFormulario() {
