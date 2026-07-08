@@ -2,3 +2,6 @@
 *.sqlite
 ca.pem
 /data/*.sqlite
+phpunit.phar
+.phpunit.result.cache
+/vendor/
