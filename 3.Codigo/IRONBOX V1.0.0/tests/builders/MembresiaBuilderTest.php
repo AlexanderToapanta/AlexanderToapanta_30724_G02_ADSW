@@ -20,4 +20,10 @@ final class MembresiaBuilderTest extends TestCase
         $this->assertSame('2026-01-01', $membresia->getFechaInicio());
         $this->assertSame('Pendiente', $membresia->getEstado());
     }
+
+    public function test_rechaza_atleta_invalido(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        (new MembresiaBuilder())->asignarAtleta(0);
+    }
 }
