@@ -1,0 +1,29 @@
+<?php
+
+use PHPUnit\Framework\TestCase;
+
+final class UsuarioBuilderTest extends TestCase
+{
+    private const CEDULA_VALIDA = '1710034065';
+
+    public function test_crea_usuario_con_datos_validos(): void
+    {
+        $usuario = (new UsuarioBuilder())
+            ->configurarNombre('Kenned Sigcha')
+            ->configurarCedula(self::CEDULA_VALIDA)
+            ->configurarCorreo('kenned@example.com')
+            ->definirContrasena('claveSegura1')
+            ->asignarRol('Atleta')
+            ->definirEstado('Activo')
+            ->definirFechaRegistro('2026-01-01')
+            ->construir();
+
+        $this->assertInstanceOf(Usuario::class, $usuario);
+        $this->assertSame('Kenned Sigcha', $usuario->getNombre());
+        $this->assertSame(self::CEDULA_VALIDA, $usuario->getCedula());
+        $this->assertSame('kenned@example.com', $usuario->getCorreo());
+        $this->assertSame('Atleta', $usuario->getRol());
+        $this->assertSame('Activo', $usuario->getEstado());
+        $this->assertSame('2026-01-01', $usuario->getFechaRegistro());
+    }
+}
