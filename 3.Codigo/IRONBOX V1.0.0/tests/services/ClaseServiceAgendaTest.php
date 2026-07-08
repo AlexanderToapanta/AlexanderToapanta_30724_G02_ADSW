@@ -41,4 +41,18 @@ final class ClaseServiceAgendaTest extends TestCase
         $this->expectExceptionMessage('La clase solicitada no existe o ya fue eliminada.');
         $service->eliminar(99);
     }
+
+    public function test_crear_clase_falla_si_entrenador_no_existe_o_no_disponible(): void
+    {
+        $claseDaoMock = $this->createMock(ClaseDAO::class);
+        $claseDaoMock->method('entrenadorExisteYDisponible')->with(5)->willReturn(false);
+
+        $membresiaDaoMock = $this->createMock(MembresiaDAO::class);
+
+        $service = new ClaseService($claseDaoMock, $membresiaDaoMock);
+
+        $this->expectException(DomainException::class);
+        $this->expectExceptionMessage('El entrenador asignado no existe o no esta disponible.');
+        $service->crear($this->datosClaseValida());
+    }
 }
