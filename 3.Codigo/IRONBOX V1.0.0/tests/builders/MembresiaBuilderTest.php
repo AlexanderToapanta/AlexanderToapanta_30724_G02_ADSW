@@ -87,4 +87,16 @@ final class MembresiaBuilderTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         (new MembresiaBuilder())->definirEstado('Suspendida');
     }
+
+    public function test_rechaza_vencimiento_anterior_a_inicio(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        (new MembresiaBuilder())
+            ->asignarAtleta(1)
+            ->configurarPlan('Mensual', 50)
+            ->definirFechaInicio('2026-02-01')
+            ->definirFechaVencimiento('2026-01-01')
+            ->definirEstado('Pendiente')
+            ->construir();
+    }
 }
