@@ -1,0 +1,39 @@
+<?php
+
+use PHPUnit\Framework\TestCase;
+
+final class MembresiaServiceEstadoTest extends TestCase
+{
+    private function crearMembresia(
+        int $id,
+        int $idAtleta,
+        string $estado,
+        string $fechaInicio = '2026-01-01',
+        string $fechaVencimiento = '2026-01-31',
+        string $tipo = 'Mensual',
+        float $precio = 50.0
+    ): Membresia {
+        return new Membresia($id, $tipo, $precio, $fechaInicio, $fechaVencimiento, $estado, $idAtleta);
+    }
+
+    public function test_registrar_pago_por_id_membresia_cambia_a_pagado(): void
+    {
+        $membresiaActual = $this->crearMembresia(1, 10, 'Pendiente');
+
+        $daoMock = $this->createMock(MembresiaDAO::class);
+        $daoMock->method('buscarPorId')->with(1)->willReturn($membresiaActual);
+        $daoMock->expects($this->once())
+            ->method('actualizarTrasPago')
+            ->with($this->callback(function (Membresia $membresia): bool {
+                return $membresia->getEstado() === 'Pagado'
+                    && $membresia->getFechaInicio() === '2026-02-01'
+                    && $membresia->getFechaVencimiento() === '2026-03-03';
+            }))
+            ->willReturnArgument(0);
+
+        $service = new MembresiaService($daoMock);
+        $resultado = $service->registrarPago(['id' => 1, 'fechaPago' => '2026-02-01']);
+
+        $this->assertSame('Pagado', $resultado->getEstado());
+    }
+}
