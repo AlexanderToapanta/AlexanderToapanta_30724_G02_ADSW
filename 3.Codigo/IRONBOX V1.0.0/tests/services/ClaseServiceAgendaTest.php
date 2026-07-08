@@ -70,4 +70,20 @@ final class ClaseServiceAgendaTest extends TestCase
         $this->expectExceptionMessage('El entrenador asignado no esta disponible en ese horario.');
         $service->crear($this->datosClaseValida());
     }
+
+    public function test_crear_clase_falla_si_hay_solapamiento_general(): void
+    {
+        $claseDaoMock = $this->createMock(ClaseDAO::class);
+        $claseDaoMock->method('entrenadorExisteYDisponible')->willReturn(true);
+        $claseDaoMock->method('existeSolapamientoEntrenador')->willReturn(false);
+        $claseDaoMock->method('existeSolapamientoGeneral')->willReturn(true);
+
+        $membresiaDaoMock = $this->createMock(MembresiaDAO::class);
+
+        $service = new ClaseService($claseDaoMock, $membresiaDaoMock);
+
+        $this->expectException(DomainException::class);
+        $this->expectExceptionMessage('El horario se solapa con otra clase existente.');
+        $service->crear($this->datosClaseValida());
+    }
 }
