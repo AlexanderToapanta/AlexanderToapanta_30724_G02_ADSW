@@ -68,4 +68,17 @@ final class MembresiaBuilderTest extends TestCase
 
         $this->assertSame('2026-01-31', $membresia->getFechaVencimiento());
     }
+
+    public function test_marcar_como_pagado_actualiza_estado_inicio_y_vencimiento(): void
+    {
+        $membresia = (new MembresiaBuilder())
+            ->asignarAtleta(1)
+            ->configurarPlan('Mensual', 50)
+            ->marcarComoPagadoDesde('2026-03-10')
+            ->construir();
+
+        $this->assertSame('Pagado', $membresia->getEstado());
+        $this->assertSame('2026-03-10', $membresia->getFechaInicio());
+        $this->assertSame('2026-04-09', $membresia->getFechaVencimiento());
+    }
 }
