@@ -32,4 +32,10 @@ final class MembresiaBuilderTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         (new MembresiaBuilder())->configurarPlan('   ', 50);
     }
+
+    public function test_rechaza_precio_cero_o_negativo(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        (new MembresiaBuilder())->configurarPlan('Mensual', -10);
+    }
 }
