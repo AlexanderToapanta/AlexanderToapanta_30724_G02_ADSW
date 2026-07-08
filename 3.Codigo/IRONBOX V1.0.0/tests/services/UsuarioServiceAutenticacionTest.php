@@ -53,4 +53,16 @@ final class UsuarioServiceAutenticacionTest extends TestCase
         $this->expectExceptionMessage('Credenciales invalidas.');
         $service->autenticar('kenned@example.com', 'claveIncorrecta');
     }
+
+    public function test_rechaza_usuario_inexistente(): void
+    {
+        $daoMock = $this->createMock(UsuarioDAO::class);
+        $daoMock->method('buscarPorCorreo')->willReturn(null);
+
+        $service = new UsuarioService($daoMock);
+
+        $this->expectException(DomainException::class);
+        $this->expectExceptionMessage('Credenciales invalidas.');
+        $service->autenticar('noexiste@example.com', 'cualquierClave');
+    }
 }
