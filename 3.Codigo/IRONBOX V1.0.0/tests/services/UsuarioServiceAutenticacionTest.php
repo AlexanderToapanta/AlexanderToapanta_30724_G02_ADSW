@@ -30,4 +30,13 @@ final class UsuarioServiceAutenticacionTest extends TestCase
 
         $this->assertSame($usuario, $resultado);
     }
+
+    public function test_rechaza_correo_vacio_o_contrasena_vacia(): void
+    {
+        $daoMock = $this->createMock(UsuarioDAO::class);
+        $service = new UsuarioService($daoMock);
+
+        $this->expectException(InvalidArgumentException::class);
+        $service->autenticar('', '');
+    }
 }
