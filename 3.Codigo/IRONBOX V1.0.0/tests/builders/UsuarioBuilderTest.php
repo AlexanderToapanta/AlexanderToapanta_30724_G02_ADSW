@@ -26,4 +26,10 @@ final class UsuarioBuilderTest extends TestCase
         $this->assertSame('Activo', $usuario->getEstado());
         $this->assertSame('2026-01-01', $usuario->getFechaRegistro());
     }
+
+    public function test_rechaza_nombre_menor_a_tres_caracteres(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        (new UsuarioBuilder())->configurarNombre('Al');
+    }
 }
