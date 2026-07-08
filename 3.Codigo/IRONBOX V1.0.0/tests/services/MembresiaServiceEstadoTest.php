@@ -67,4 +67,22 @@ final class MembresiaServiceEstadoTest extends TestCase
         $this->expectExceptionMessage('No existe una membresia asignada para registrar el pago.');
         $service->registrarPago(['id' => 99]);
     }
+
+    public function test_cancelar_membresia_existente(): void
+    {
+        $membresiaActual = $this->crearMembresia(3, 30, 'Pagado');
+        $membresiaCancelada = $this->crearMembresia(3, 30, 'Cancelada');
+
+        $daoMock = $this->createMock(MembresiaDAO::class);
+        $daoMock->method('buscarPorId')->with(3)->willReturn($membresiaActual);
+        $daoMock->expects($this->once())
+            ->method('cancelar')
+            ->with(3)
+            ->willReturn($membresiaCancelada);
+
+        $service = new MembresiaService($daoMock);
+        $resultado = $service->cancelar(['id' => 3]);
+
+        $this->assertSame('Cancelada', $resultado->getEstado());
+    }
 }
