@@ -38,4 +38,16 @@ final class MembresiaBuilderTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         (new MembresiaBuilder())->configurarPlan('Mensual', -10);
     }
+
+    public function test_redondea_precio_a_dos_decimales(): void
+    {
+        $membresia = (new MembresiaBuilder())
+            ->asignarAtleta(1)
+            ->configurarPlan('Mensual', 49.995)
+            ->definirFechaInicio('2026-01-01')
+            ->definirEstado('Pendiente')
+            ->construir();
+
+        $this->assertSame(50.0, $membresia->getPrecio());
+    }
 }
