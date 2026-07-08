@@ -66,4 +66,10 @@ final class UsuarioBuilderTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         (new UsuarioBuilder())->definirContrasena('1234567');
     }
+
+    public function test_rechaza_rol_invalido(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        (new UsuarioBuilder())->asignarRol('SuperAdmin');
+    }
 }
