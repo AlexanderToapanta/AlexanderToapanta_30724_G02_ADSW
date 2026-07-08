@@ -78,4 +78,12 @@ final class UsuarioBuilderTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         (new UsuarioBuilder())->definirEstado('Suspendido');
     }
+
+    public function test_construir_falla_si_faltan_datos_obligatorios(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        (new UsuarioBuilder())
+            ->configurarNombre('Kenned Sigcha')
+            ->construir();
+    }
 }
