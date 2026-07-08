@@ -65,4 +65,18 @@ final class UsuarioServiceAutenticacionTest extends TestCase
         $this->expectExceptionMessage('Credenciales invalidas.');
         $service->autenticar('noexiste@example.com', 'cualquierClave');
     }
+
+    public function test_rechaza_usuario_inactivo(): void
+    {
+        $usuario = $this->crearUsuario('kenned@example.com', 'claveSegura1', 'Inactivo');
+
+        $daoMock = $this->createMock(UsuarioDAO::class);
+        $daoMock->method('buscarPorCorreo')->willReturn($usuario);
+
+        $service = new UsuarioService($daoMock);
+
+        $this->expectException(DomainException::class);
+        $this->expectExceptionMessage('El usuario se encuentra inactivo.');
+        $service->autenticar('kenned@example.com', 'claveSegura1');
+    }
 }
