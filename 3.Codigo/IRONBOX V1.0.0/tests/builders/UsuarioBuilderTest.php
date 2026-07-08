@@ -32,4 +32,10 @@ final class UsuarioBuilderTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         (new UsuarioBuilder())->configurarNombre('Al');
     }
+
+    public function test_rechaza_cedula_ecuatoriana_invalida(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        (new UsuarioBuilder())->configurarCedula('1234567890');
+    }
 }
