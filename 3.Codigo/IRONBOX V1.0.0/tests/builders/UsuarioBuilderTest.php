@@ -38,4 +38,10 @@ final class UsuarioBuilderTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         (new UsuarioBuilder())->configurarCedula('1234567890');
     }
+
+    public function test_rechaza_correo_invalido(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        (new UsuarioBuilder())->configurarCorreo('no-es-un-correo');
+    }
 }
