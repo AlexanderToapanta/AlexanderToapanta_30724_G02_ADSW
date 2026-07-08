@@ -55,4 +55,16 @@ final class MembresiaServiceEstadoTest extends TestCase
         $this->assertSame(20, $resultado->getIdAtleta());
         $this->assertSame('Pagado', $resultado->getEstado());
     }
+
+    public function test_registrar_pago_falla_si_no_existe_membresia(): void
+    {
+        $daoMock = $this->createMock(MembresiaDAO::class);
+        $daoMock->method('buscarPorId')->willReturn(null);
+
+        $service = new MembresiaService($daoMock);
+
+        $this->expectException(DomainException::class);
+        $this->expectExceptionMessage('No existe una membresia asignada para registrar el pago.');
+        $service->registrarPago(['id' => 99]);
+    }
 }
