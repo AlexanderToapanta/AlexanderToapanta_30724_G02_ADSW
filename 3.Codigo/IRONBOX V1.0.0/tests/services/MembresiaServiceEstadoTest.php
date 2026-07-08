@@ -36,4 +36,23 @@ final class MembresiaServiceEstadoTest extends TestCase
 
         $this->assertSame('Pagado', $resultado->getEstado());
     }
+
+    public function test_registrar_pago_por_id_atleta_busca_membresia_actual(): void
+    {
+        $membresiaActual = $this->crearMembresia(2, 20, 'Pendiente');
+
+        $daoMock = $this->createMock(MembresiaDAO::class);
+        $daoMock->expects($this->never())->method('buscarPorId');
+        $daoMock->expects($this->once())
+            ->method('buscarActualPorAtleta')
+            ->with(20)
+            ->willReturn($membresiaActual);
+        $daoMock->method('actualizarTrasPago')->willReturnArgument(0);
+
+        $service = new MembresiaService($daoMock);
+        $resultado = $service->registrarPago(['idAtleta' => 20]);
+
+        $this->assertSame(20, $resultado->getIdAtleta());
+        $this->assertSame('Pagado', $resultado->getEstado());
+    }
 }
