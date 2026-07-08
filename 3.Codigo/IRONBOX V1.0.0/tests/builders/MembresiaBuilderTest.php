@@ -26,4 +26,10 @@ final class MembresiaBuilderTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         (new MembresiaBuilder())->asignarAtleta(0);
     }
+
+    public function test_rechaza_tipo_vacio(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        (new MembresiaBuilder())->configurarPlan('   ', 50);
+    }
 }
