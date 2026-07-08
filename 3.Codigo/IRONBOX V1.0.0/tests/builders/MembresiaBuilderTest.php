@@ -56,4 +56,16 @@ final class MembresiaBuilderTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         (new MembresiaBuilder())->definirFechaInicio('01-01-2026');
     }
+
+    public function test_calcula_vencimiento_a_treinta_dias(): void
+    {
+        $membresia = (new MembresiaBuilder())
+            ->asignarAtleta(1)
+            ->configurarPlan('Mensual', 50)
+            ->definirFechaInicio('2026-01-01')
+            ->definirEstado('Pendiente')
+            ->construir();
+
+        $this->assertSame('2026-01-31', $membresia->getFechaVencimiento());
+    }
 }
