@@ -60,4 +60,10 @@ final class UsuarioBuilderTest extends TestCase
         $this->assertNotSame('claveSegura1', $usuario->getContrasena());
         $this->assertTrue(password_verify('claveSegura1', $usuario->getContrasena()));
     }
+
+    public function test_rechaza_contrasena_menor_a_ocho_caracteres(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        (new UsuarioBuilder())->definirContrasena('1234567');
+    }
 }
