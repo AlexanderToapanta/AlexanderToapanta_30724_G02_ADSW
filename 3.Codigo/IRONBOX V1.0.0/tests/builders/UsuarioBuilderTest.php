@@ -72,4 +72,10 @@ final class UsuarioBuilderTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         (new UsuarioBuilder())->asignarRol('SuperAdmin');
     }
+
+    public function test_rechaza_estado_invalido(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        (new UsuarioBuilder())->definirEstado('Suspendido');
+    }
 }
