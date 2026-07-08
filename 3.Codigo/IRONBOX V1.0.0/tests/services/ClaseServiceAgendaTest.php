@@ -27,4 +27,18 @@ final class ClaseServiceAgendaTest extends TestCase
 
         $this->assertTrue(true);
     }
+
+    public function test_eliminar_clase_inexistente_lanza_error(): void
+    {
+        $claseDaoMock = $this->createMock(ClaseDAO::class);
+        $claseDaoMock->method('eliminar')->with(99)->willReturn(false);
+
+        $membresiaDaoMock = $this->createMock(MembresiaDAO::class);
+
+        $service = new ClaseService($claseDaoMock, $membresiaDaoMock);
+
+        $this->expectException(DomainException::class);
+        $this->expectExceptionMessage('La clase solicitada no existe o ya fue eliminada.');
+        $service->eliminar(99);
+    }
 }
