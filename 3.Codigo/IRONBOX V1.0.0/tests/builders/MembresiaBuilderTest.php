@@ -50,4 +50,10 @@ final class MembresiaBuilderTest extends TestCase
 
         $this->assertSame(50.0, $membresia->getPrecio());
     }
+
+    public function test_rechaza_fecha_inicio_invalida(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        (new MembresiaBuilder())->definirFechaInicio('01-01-2026');
+    }
 }
