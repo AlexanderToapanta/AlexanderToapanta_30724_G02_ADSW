@@ -79,4 +79,20 @@ final class UsuarioServiceAutenticacionTest extends TestCase
         $this->expectExceptionMessage('El usuario se encuentra inactivo.');
         $service->autenticar('kenned@example.com', 'claveSegura1');
     }
+
+    public function test_normaliza_correo_antes_de_autenticar(): void
+    {
+        $usuario = $this->crearUsuario('kenned@example.com', 'claveSegura1', 'Activo');
+
+        $daoMock = $this->createMock(UsuarioDAO::class);
+        $daoMock->expects($this->once())
+            ->method('buscarPorCorreo')
+            ->with('kenned@example.com')
+            ->willReturn($usuario);
+
+        $service = new UsuarioService($daoMock);
+        $resultado = $service->autenticar('  KENNED@Example.com  ', 'claveSegura1');
+
+        $this->assertSame($usuario, $resultado);
+    }
 }
