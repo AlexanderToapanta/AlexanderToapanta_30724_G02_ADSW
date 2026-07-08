@@ -86,4 +86,38 @@ final class ClaseServiceAgendaTest extends TestCase
         $this->expectExceptionMessage('El horario se solapa con otra clase existente.');
         $service->crear($this->datosClaseValida());
     }
+
+    public function test_editar_clase_ignora_su_propio_id_al_validar_solapamiento(): void
+    {
+        $datos = $this->datosClaseValida();
+        $claseExistente = new Clase(
+            7,
+            $datos['dia'],
+            $datos['hora'],
+            $datos['duracion'],
+            $datos['cupoMaximo'],
+            $datos['cupoMaximo'],
+            $datos['entrenadorId']
+        );
+
+        $claseDaoMock = $this->createMock(ClaseDAO::class);
+        $claseDaoMock->method('buscarPorId')->with(7)->willReturn($claseExistente);
+        $claseDaoMock->method('entrenadorExisteYDisponible')->willReturn(true);
+        $claseDaoMock->expects($this->once())
+            ->method('existeSolapamientoEntrenador')
+            ->with($datos['dia'], $datos['hora'], $datos['duracion'], $datos['entrenadorId'], 7)
+            ->willReturn(false);
+        $claseDaoMock->expects($this->once())
+            ->method('existeSolapamientoGeneral')
+            ->with($datos['dia'], $datos['hora'], $datos['duracion'], 7)
+            ->willReturn(false);
+        $claseDaoMock->method('actualizar')->willReturnArgument(0);
+
+        $membresiaDaoMock = $this->createMock(MembresiaDAO::class);
+
+        $service = new ClaseService($claseDaoMock, $membresiaDaoMock);
+        $resultado = $service->editar(7, $datos);
+
+        $this->assertSame(7, $resultado->getId());
+    }
 }
