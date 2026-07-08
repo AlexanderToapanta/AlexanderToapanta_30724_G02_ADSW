@@ -44,4 +44,20 @@ final class UsuarioBuilderTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         (new UsuarioBuilder())->configurarCorreo('no-es-un-correo');
     }
+
+    public function test_hashea_contrasena_correctamente(): void
+    {
+        $usuario = (new UsuarioBuilder())
+            ->configurarNombre('Kenned Sigcha')
+            ->configurarCedula(self::CEDULA_VALIDA)
+            ->configurarCorreo('kenned@example.com')
+            ->definirContrasena('claveSegura1')
+            ->asignarRol('Atleta')
+            ->definirEstado('Activo')
+            ->definirFechaRegistro('2026-01-01')
+            ->construir();
+
+        $this->assertNotSame('claveSegura1', $usuario->getContrasena());
+        $this->assertTrue(password_verify('claveSegura1', $usuario->getContrasena()));
+    }
 }
