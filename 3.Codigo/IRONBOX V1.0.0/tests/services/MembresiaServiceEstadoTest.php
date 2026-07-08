@@ -85,4 +85,19 @@ final class MembresiaServiceEstadoTest extends TestCase
 
         $this->assertSame('Cancelada', $resultado->getEstado());
     }
+
+    public function test_solicitar_membresia_falla_si_ya_tiene_pendiente_o_pagada(): void
+    {
+        $membresiaVigente = $this->crearMembresia(4, 40, 'Pagado', '2026-01-01', '2999-12-31');
+
+        $daoMock = $this->createMock(MembresiaDAO::class);
+        $daoMock->method('atletaExiste')->with(40)->willReturn(true);
+        $daoMock->method('buscarActualPorAtleta')->with(40)->willReturn($membresiaVigente);
+
+        $service = new MembresiaService($daoMock);
+
+        $this->expectException(DomainException::class);
+        $this->expectExceptionMessage('Ya tienes una solicitud pendiente o una membresia activa.');
+        $service->solicitar(40);
+    }
 }
