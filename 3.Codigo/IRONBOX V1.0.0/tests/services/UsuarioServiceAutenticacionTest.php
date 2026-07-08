@@ -39,4 +39,18 @@ final class UsuarioServiceAutenticacionTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $service->autenticar('', '');
     }
+
+    public function test_rechaza_contrasena_incorrecta(): void
+    {
+        $usuario = $this->crearUsuario('kenned@example.com', 'claveSegura1', 'Activo');
+
+        $daoMock = $this->createMock(UsuarioDAO::class);
+        $daoMock->method('buscarPorCorreo')->willReturn($usuario);
+
+        $service = new UsuarioService($daoMock);
+
+        $this->expectException(DomainException::class);
+        $this->expectExceptionMessage('Credenciales invalidas.');
+        $service->autenticar('kenned@example.com', 'claveIncorrecta');
+    }
 }
