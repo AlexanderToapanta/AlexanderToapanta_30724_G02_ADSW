@@ -37,4 +37,22 @@ final class MembresiaServiceAsignacionTest extends TestCase
         $this->assertSame(50.0, $resultado->getPrecio());
     }
 
+    public function test_crear_falla_si_atleta_no_existe(): void
+    {
+        $daoMock = $this->createMock(MembresiaDAO::class);
+        $daoMock->method('atletaExiste')->with(999)->willReturn(false);
+
+        $service = new MembresiaService($daoMock);
+
+        $this->expectException(DomainException::class);
+        $this->expectExceptionMessage('El atleta seleccionado no existe.');
+        $service->crear([
+            'idAtleta' => 999,
+            'tipo' => 'Mensual',
+            'precio' => 50,
+            'fechaInicio' => '2026-02-01',
+            'estado' => 'Pendiente',
+        ]);
+    }
+
 }
