@@ -78,4 +78,16 @@ final class ClaseBuilderTest extends TestCase
         (new ClaseBuilder())->asignarEntrenador(0);
     }
 
+    public function test_rechaza_cupos_disponibles_mayores_al_cupo_maximo(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        (new ClaseBuilder())
+            ->definirDiaHora($this->fechaFutura(), '10:00')
+            ->definirDuracion(60)
+            ->definirCupoMaximo(20, 30)
+            ->definirCuposDisponibles(21)
+            ->asignarEntrenador(5)
+            ->construir();
+    }
+
 }
