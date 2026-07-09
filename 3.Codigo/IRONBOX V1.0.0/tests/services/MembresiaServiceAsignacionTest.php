@@ -73,4 +73,26 @@ final class MembresiaServiceAsignacionTest extends TestCase
         $this->assertSame('2026-03-03', $resultado->getFechaVencimiento());
     }
 
+    public function test_actualizar_membresia_existente(): void
+    {
+        $daoMock = $this->createMock(MembresiaDAO::class);
+        $daoMock->method('buscarPorId')->with(3)->willReturn($this->membresiaBase(3, 20));
+        $daoMock->method('atletaExiste')->with(20)->willReturn(true);
+        $daoMock->method('actualizar')->willReturnArgument(0);
+
+        $service = new MembresiaService($daoMock);
+        $resultado = $service->actualizar([
+            'id' => 3,
+            'idAtleta' => 20,
+            'tipo' => 'Trimestral',
+            'precio' => 135,
+            'fechaInicio' => '2026-03-01',
+            'estado' => 'Pagado',
+        ]);
+
+        $this->assertSame(3, $resultado->getId());
+        $this->assertSame('Trimestral', $resultado->getTipo());
+        $this->assertSame('Pagado', $resultado->getEstado());
+    }
+
 }
