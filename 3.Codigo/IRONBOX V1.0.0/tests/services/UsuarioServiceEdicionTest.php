@@ -1,0 +1,46 @@
+<?php
+
+use PHPUnit\Framework\TestCase;
+
+final class UsuarioServiceEdicionTest extends TestCase
+{
+    private function crearUsuarioActual(int $id = 1): Usuario
+    {
+        return new Usuario(
+            $id,
+            'Josue Almeida',
+            '1710034065',
+            'josue@example.com',
+            password_hash('claveActual123', PASSWORD_DEFAULT),
+            'Atleta',
+            'Activo',
+            '2026-01-01'
+        );
+    }
+
+    public function test_edita_usuario_con_datos_validos(): void
+    {
+        $usuarioActual = $this->crearUsuarioActual(5);
+
+        $daoMock = $this->createMock(UsuarioDAO::class);
+        $daoMock->method('buscarPorId')->with(5)->willReturn($usuarioActual);
+        $daoMock->method('correoExiste')->with('nuevo@example.com', 5)->willReturn(false);
+        $daoMock->method('cedulaExiste')->with('1710034065', 5)->willReturn(false);
+        $daoMock->method('actualizar')->willReturnArgument(0);
+
+        $service = new UsuarioService($daoMock);
+        $resultado = $service->editar(5, [
+            'nombre' => 'Josue Editado',
+            'cedula' => '1710034065',
+            'correo' => 'nuevo@example.com',
+            'rol' => 'Entrenador',
+        ]);
+
+        $this->assertSame(5, $resultado->getId());
+        $this->assertSame('Josue Editado', $resultado->getNombre());
+        $this->assertSame('1710034065', $resultado->getCedula());
+        $this->assertSame('nuevo@example.com', $resultado->getCorreo());
+        $this->assertSame('Entrenador', $resultado->getRol());
+    }
+
+}
