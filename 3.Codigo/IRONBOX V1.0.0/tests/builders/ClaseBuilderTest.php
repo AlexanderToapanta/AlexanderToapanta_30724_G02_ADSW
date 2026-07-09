@@ -66,4 +66,10 @@ final class ClaseBuilderTest extends TestCase
         (new ClaseBuilder())->definirDuracion(241);
     }
 
+    public function test_rechaza_cupo_mayor_a_capacidad(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        (new ClaseBuilder())->definirCupoMaximo(31, 30);
+    }
+
 }
