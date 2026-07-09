@@ -67,4 +67,17 @@ final class AuthControllerTest extends TestCase
         $this->assertNull($usuario);
     }
 
+    public function test_logout_cierra_sesion(): void
+    {
+        authGuardarUsuario([
+            'id' => 1,
+            'nombre' => 'Usuario Demo',
+            'rol' => 'Atleta',
+        ], 22);
+
+        authCerrarSesion();
+
+        $this->assertNull(authUsuarioActual());
+    }
+
 }
