@@ -114,4 +114,20 @@ final class UsuarioServiceEdicionTest extends TestCase
         $service->editar(10, ['correo' => 'duplicado@example.com']);
     }
 
+    public function test_editar_rechaza_cedula_usada_por_otro_usuario(): void
+    {
+        $usuarioActual = $this->crearUsuarioActual(11);
+
+        $daoMock = $this->createMock(UsuarioDAO::class);
+        $daoMock->method('buscarPorId')->with(11)->willReturn($usuarioActual);
+        $daoMock->method('correoExiste')->willReturn(false);
+        $daoMock->method('cedulaExiste')->with('1104680135', 11)->willReturn(true);
+
+        $service = new UsuarioService($daoMock);
+
+        $this->expectException(DomainException::class);
+        $this->expectExceptionMessage('La cedula ya esta registrada por otro usuario.');
+        $service->editar(11, ['cedula' => '1104680135']);
+    }
+
 }
