@@ -43,4 +43,16 @@ final class UsuarioServiceEdicionTest extends TestCase
         $this->assertSame('Entrenador', $resultado->getRol());
     }
 
+    public function test_editar_falla_si_usuario_no_existe(): void
+    {
+        $daoMock = $this->createMock(UsuarioDAO::class);
+        $daoMock->method('buscarPorId')->with(99)->willReturn(null);
+
+        $service = new UsuarioService($daoMock);
+
+        $this->expectException(DomainException::class);
+        $this->expectExceptionMessage('El usuario solicitado no existe.');
+        $service->editar(99, ['nombre' => 'No existe']);
+    }
+
 }
