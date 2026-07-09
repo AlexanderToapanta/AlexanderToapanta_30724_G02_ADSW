@@ -140,4 +140,20 @@ final class ClaseServiceReservasCuposTest extends TestCase
         $service->reservar(['idAtleta' => 10, 'idClase' => 7]);
     }
 
+    public function test_cancelar_reserva_libera_cupo(): void
+    {
+        $claseDaoMock = $this->createMock(ClaseDAO::class);
+        $claseDaoMock->method('atletaExiste')->with(10)->willReturn(true);
+        $claseDaoMock->expects($this->once())
+            ->method('cancelarReservaYLiberarCupo')
+            ->with(25, 10)
+            ->willReturn(true);
+
+        $membresiaDaoMock = $this->createMock(MembresiaDAO::class);
+        $service = new ClaseService($claseDaoMock, $membresiaDaoMock);
+
+        $service->cancelar(['id' => 25, 'idAtleta' => 10]);
+        $this->assertTrue(true);
+    }
+
 }
