@@ -30,4 +30,10 @@ final class ClaseBuilderTest extends TestCase
         $this->assertSame(20, $clase->getCuposDisponibles());
     }
 
+    public function test_rechaza_id_invalido(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        (new ClaseBuilder())->conId(0);
+    }
+
 }
