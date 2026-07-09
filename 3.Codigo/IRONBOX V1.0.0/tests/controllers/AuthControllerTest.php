@@ -46,4 +46,17 @@ final class AuthControllerTest extends TestCase
         $this->assertSame('Entrenador', $resultado->getRol());
     }
 
+    public function test_login_atleta_devuelve_rol_atleta(): void
+    {
+        $usuario = $this->crearUsuario('Atleta', 'atleta@example.com');
+
+        $daoMock = $this->createMock(UsuarioDAO::class);
+        $daoMock->method('buscarPorCorreo')->with('atleta@example.com')->willReturn($usuario);
+
+        $service = new UsuarioService($daoMock);
+        $resultado = $service->autenticar('atleta@example.com', 'claveSegura123');
+
+        $this->assertSame('Atleta', $resultado->getRol());
+    }
+
 }
