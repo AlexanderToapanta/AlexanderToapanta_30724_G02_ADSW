@@ -54,4 +54,10 @@ final class ClaseBuilderTest extends TestCase
         (new ClaseBuilder())->definirDiaHora(date('Y-m-d', strtotime('-1 day')), '10:00');
     }
 
+    public function test_rechaza_duracion_cero_o_negativa(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        (new ClaseBuilder())->definirDuracion(0);
+    }
+
 }
