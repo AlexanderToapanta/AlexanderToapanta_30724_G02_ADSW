@@ -130,4 +130,18 @@ final class UsuarioServiceEdicionTest extends TestCase
         $service->editar(11, ['cedula' => '1104680135']);
     }
 
+    public function test_desactivar_usuario_activo(): void
+    {
+        $usuarioActual = $this->crearUsuarioActual(12);
+
+        $daoMock = $this->createMock(UsuarioDAO::class);
+        $daoMock->method('buscarPorId')->with(12)->willReturn($usuarioActual);
+        $daoMock->expects($this->once())->method('desactivar')->with(12)->willReturn(true);
+
+        $service = new UsuarioService($daoMock);
+        $service->desactivar(12);
+
+        $this->assertTrue(true);
+    }
+
 }
