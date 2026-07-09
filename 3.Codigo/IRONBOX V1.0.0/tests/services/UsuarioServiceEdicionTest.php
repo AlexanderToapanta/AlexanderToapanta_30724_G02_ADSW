@@ -55,4 +55,26 @@ final class UsuarioServiceEdicionTest extends TestCase
         $service->editar(99, ['nombre' => 'No existe']);
     }
 
+    public function test_editar_mantiene_contrasena_si_no_se_envia_nueva(): void
+    {
+        $usuarioActual = $this->crearUsuarioActual(7);
+        $hashActual = $usuarioActual->getContrasena();
+
+        $daoMock = $this->createMock(UsuarioDAO::class);
+        $daoMock->method('buscarPorId')->with(7)->willReturn($usuarioActual);
+        $daoMock->method('correoExiste')->willReturn(false);
+        $daoMock->method('cedulaExiste')->willReturn(false);
+        $daoMock->expects($this->once())
+            ->method('actualizar')
+            ->with($this->callback(function (Usuario $usuario) use ($hashActual): bool {
+                return $usuario->getContrasena() === $hashActual;
+            }))
+            ->willReturnArgument(0);
+
+        $service = new UsuarioService($daoMock);
+        $service->editar(7, ['nombre' => 'Sin cambio de clave']);
+
+        $this->assertTrue(true);
+    }
+
 }
