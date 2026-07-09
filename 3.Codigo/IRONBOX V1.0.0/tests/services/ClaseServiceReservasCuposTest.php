@@ -32,4 +32,24 @@ final class ClaseServiceReservasCuposTest extends TestCase
         $this->assertCount(1, $resultado);
     }
 
+    public function test_reservar_cupo_con_membresia_pagada_y_vigente(): void
+    {
+        $reserva = new Reserva(15, 10, 7, date('Y-m-d H:i:s'), 'Confirmada');
+
+        $claseDaoMock = $this->createMock(ClaseDAO::class);
+        $claseDaoMock->method('atletaExiste')->with(10)->willReturn(true);
+        $claseDaoMock->method('claseExiste')->with(7)->willReturn(true);
+        $claseDaoMock->method('consultarCupos')->with(7)->willReturn(3);
+        $claseDaoMock->method('existeReservaActiva')->with(10, 7)->willReturn(false);
+        $claseDaoMock->method('reservarCupo')->with(10, 7)->willReturn($reserva);
+
+        $membresiaDaoMock = $this->createMock(MembresiaDAO::class);
+        $membresiaDaoMock->method('buscarActualPorAtleta')->with(10)->willReturn($this->membresiaPagadaVigente(10));
+
+        $service = new ClaseService($claseDaoMock, $membresiaDaoMock);
+        $resultado = $service->reservar(['idAtleta' => 10, 'idClase' => 7]);
+
+        $this->assertSame($reserva, $resultado);
+    }
+
 }
