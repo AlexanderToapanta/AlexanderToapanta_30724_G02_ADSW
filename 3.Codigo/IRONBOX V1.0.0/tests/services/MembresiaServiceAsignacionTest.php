@@ -55,4 +55,22 @@ final class MembresiaServiceAsignacionTest extends TestCase
         ]);
     }
 
+    public function test_crear_calcula_vencimiento_si_no_se_envia(): void
+    {
+        $daoMock = $this->createMock(MembresiaDAO::class);
+        $daoMock->method('atletaExiste')->with(20)->willReturn(true);
+        $daoMock->method('crear')->willReturnArgument(0);
+
+        $service = new MembresiaService($daoMock);
+        $resultado = $service->crear([
+            'idAtleta' => 20,
+            'tipo' => 'Mensual',
+            'precio' => 50,
+            'fechaInicio' => '2026-02-01',
+            'estado' => 'Pendiente',
+        ]);
+
+        $this->assertSame('2026-03-03', $resultado->getFechaVencimiento());
+    }
+
 }
