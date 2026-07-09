@@ -60,4 +60,10 @@ final class ClaseBuilderTest extends TestCase
         (new ClaseBuilder())->definirDuracion(0);
     }
 
+    public function test_rechaza_duracion_mayor_a_240(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        (new ClaseBuilder())->definirDuracion(241);
+    }
+
 }
