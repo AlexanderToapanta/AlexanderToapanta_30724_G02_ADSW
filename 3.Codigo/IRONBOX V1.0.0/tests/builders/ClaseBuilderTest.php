@@ -48,4 +48,10 @@ final class ClaseBuilderTest extends TestCase
         (new ClaseBuilder())->definirDiaHora($this->fechaFutura(), '25:00');
     }
 
+    public function test_rechaza_fecha_u_hora_pasada(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        (new ClaseBuilder())->definirDiaHora(date('Y-m-d', strtotime('-1 day')), '10:00');
+    }
+
 }
