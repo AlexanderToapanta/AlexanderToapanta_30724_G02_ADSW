@@ -79,4 +79,30 @@ final class ClaseServiceReservasCuposTest extends TestCase
         $service->reservar(['idAtleta' => 10, 'idClase' => 999]);
     }
 
+    public function test_reservar_falla_si_membresia_no_esta_vigente(): void
+    {
+        $membresiaVencida = new Membresia(
+            2,
+            'Mensual',
+            50.0,
+            date('Y-m-d', strtotime('-40 days')),
+            date('Y-m-d', strtotime('-10 days')),
+            'Pagado',
+            10
+        );
+
+        $claseDaoMock = $this->createMock(ClaseDAO::class);
+        $claseDaoMock->method('atletaExiste')->with(10)->willReturn(true);
+        $claseDaoMock->method('claseExiste')->with(7)->willReturn(true);
+
+        $membresiaDaoMock = $this->createMock(MembresiaDAO::class);
+        $membresiaDaoMock->method('buscarActualPorAtleta')->with(10)->willReturn($membresiaVencida);
+
+        $service = new ClaseService($claseDaoMock, $membresiaDaoMock);
+
+        $this->expectException(DomainException::class);
+        $this->expectExceptionMessage('El atleta no tiene una membresia pagada y vigente.');
+        $service->reservar(['idAtleta' => 10, 'idClase' => 7]);
+    }
+
 }
