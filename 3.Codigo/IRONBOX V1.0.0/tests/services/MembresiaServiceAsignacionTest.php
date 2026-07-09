@@ -113,4 +113,14 @@ final class MembresiaServiceAsignacionTest extends TestCase
         ]);
     }
 
+    public function test_obtener_actual_por_atleta_rechaza_id_invalido(): void
+    {
+        $daoMock = $this->createMock(MembresiaDAO::class);
+        $service = new MembresiaService($daoMock);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Debe indicar un atleta valido.');
+        $service->obtenerActualPorAtleta(0);
+    }
+
 }
