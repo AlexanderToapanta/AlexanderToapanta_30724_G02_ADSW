@@ -59,4 +59,12 @@ final class AuthControllerTest extends TestCase
         $this->assertSame('Atleta', $resultado->getRol());
     }
 
+    public function test_me_sin_sesion_devuelve_no_autenticado(): void
+    {
+        authCerrarSesion();
+        $usuario = authUsuarioActual();
+
+        $this->assertNull($usuario);
+    }
+
 }
