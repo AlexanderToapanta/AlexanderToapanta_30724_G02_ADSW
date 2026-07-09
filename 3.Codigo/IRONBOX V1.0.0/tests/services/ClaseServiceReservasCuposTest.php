@@ -122,4 +122,22 @@ final class ClaseServiceReservasCuposTest extends TestCase
         $service->reservar(['idAtleta' => 10, 'idClase' => 7]);
     }
 
+    public function test_reservar_falla_si_ya_existe_reserva_activa(): void
+    {
+        $claseDaoMock = $this->createMock(ClaseDAO::class);
+        $claseDaoMock->method('atletaExiste')->with(10)->willReturn(true);
+        $claseDaoMock->method('claseExiste')->with(7)->willReturn(true);
+        $claseDaoMock->method('consultarCupos')->with(7)->willReturn(2);
+        $claseDaoMock->method('existeReservaActiva')->with(10, 7)->willReturn(true);
+
+        $membresiaDaoMock = $this->createMock(MembresiaDAO::class);
+        $membresiaDaoMock->method('buscarActualPorAtleta')->with(10)->willReturn($this->membresiaPagadaVigente(10));
+
+        $service = new ClaseService($claseDaoMock, $membresiaDaoMock);
+
+        $this->expectException(DomainException::class);
+        $this->expectExceptionMessage('El atleta ya tiene una reserva activa para esta clase.');
+        $service->reservar(['idAtleta' => 10, 'idClase' => 7]);
+    }
+
 }
