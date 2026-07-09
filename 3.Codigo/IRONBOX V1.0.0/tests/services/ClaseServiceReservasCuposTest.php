@@ -65,4 +65,18 @@ final class ClaseServiceReservasCuposTest extends TestCase
         $service->reservar(['idAtleta' => 99, 'idClase' => 1]);
     }
 
+    public function test_reservar_falla_si_clase_no_existe(): void
+    {
+        $claseDaoMock = $this->createMock(ClaseDAO::class);
+        $claseDaoMock->method('atletaExiste')->with(10)->willReturn(true);
+        $claseDaoMock->method('claseExiste')->with(999)->willReturn(false);
+
+        $membresiaDaoMock = $this->createMock(MembresiaDAO::class);
+        $service = new ClaseService($claseDaoMock, $membresiaDaoMock);
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Debe seleccionar una clase valida.');
+        $service->reservar(['idAtleta' => 10, 'idClase' => 999]);
+    }
+
 }
