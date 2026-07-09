@@ -99,4 +99,19 @@ final class UsuarioServiceEdicionTest extends TestCase
         $this->assertTrue(true);
     }
 
+    public function test_editar_rechaza_correo_usado_por_otro_usuario(): void
+    {
+        $usuarioActual = $this->crearUsuarioActual(10);
+
+        $daoMock = $this->createMock(UsuarioDAO::class);
+        $daoMock->method('buscarPorId')->with(10)->willReturn($usuarioActual);
+        $daoMock->method('correoExiste')->with('duplicado@example.com', 10)->willReturn(true);
+
+        $service = new UsuarioService($daoMock);
+
+        $this->expectException(DomainException::class);
+        $this->expectExceptionMessage('El correo ya esta registrado por otro usuario.');
+        $service->editar(10, ['correo' => 'duplicado@example.com']);
+    }
+
 }
