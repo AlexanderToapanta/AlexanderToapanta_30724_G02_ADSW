@@ -36,4 +36,10 @@ final class ClaseBuilderTest extends TestCase
         (new ClaseBuilder())->conId(0);
     }
 
+    public function test_rechaza_fecha_invalida(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        (new ClaseBuilder())->definirDiaHora('01-08-2026', '10:00');
+    }
+
 }
