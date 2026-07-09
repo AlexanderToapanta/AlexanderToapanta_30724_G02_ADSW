@@ -72,4 +72,10 @@ final class ClaseBuilderTest extends TestCase
         (new ClaseBuilder())->definirCupoMaximo(31, 30);
     }
 
+    public function test_rechaza_entrenador_invalido(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        (new ClaseBuilder())->asignarEntrenador(0);
+    }
+
 }
