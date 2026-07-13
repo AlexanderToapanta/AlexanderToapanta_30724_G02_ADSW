@@ -24,6 +24,6 @@
         ]
     },
     "scripts": {
-        "test": "phpunit --configuration phpunit.xml"
+        "test": "phpunit --configuration phpunit.xml --stderr --testdox tests"
     }
 }
